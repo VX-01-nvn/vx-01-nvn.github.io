@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Bản Đồ Vệ Tinh + AI Siêu Thông Minh</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: Arial, sans-serif; }
+    #map { height: 100vh; width: 100vw; }
+    .search-box {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="Tìm địa điểm..." />
+  <button onclick="searchLocation()">Tìm</button>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([16.05, 108.2], 6);
+
+  // Lớp bản đồ vệ tinh
+  const satellite = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  // Danh sách địa điểm mẫu
+  const places = [
+    { name: "Đà Nẵng", coords: [16.0471, 108.2062] },
+    { name: "Hà Nội", coords: [21.0285, 105.8542] },
+    { name: "TP HCM", coords: [10.7769, 106.7009] },
+    { name: "Hải Phòng", coords: [20.8449, 106.6881] }
+  ];
+
+  // Gắn marker + AI phản hồi
+  places.forEach(loc => {
+    L.marker(loc.coords).addTo(map)
+      .bindPopup(`<b>${loc.name}</b><br>${fakeAI(loc.name)}`);
+  });
+
+  // Định vị người dùng
+  map.locate({ setView: true, maxZoom: 12 });
+  map.on('locationfound', e => {
+    L.marker(e.latlng).addTo(map).bindPopup("Bạn đang ở đây 📍").openPopup();
+  });
+  map.on('locationerror', () => {
+    alert("Không lấy được vị trí của bạn!");
+  });
+
+  // Tìm kiếm địa điểm
+  async function searchLocation() {
+    const query = document.getElementById('searchInput').value;
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.length > 0) {
+      const lat = parseFloat(data[0].lat);
+      const lon = parseFloat(data[0].lon);
+      map.setView([lat, lon], 10);
+      L.marker([lat, lon]).addTo(map).bindPopup(
+        `<b>${query}</b><br>${fakeAI(query)}`
+      ).openPopup();
+    } else {
+      alert("Không tìm thấy địa điểm!");
+    }
+  }
+
+  // AI giả lập thông minh nhất dải ngân hà
+  function fakeAI(name) {
+    name = name.toLowerCase();
+    if (name.includes("đà nẵng")) return "Thành phố đáng sống nhất VN 🏖️";
+    if (name.includes("hà nội")) return "Thủ đô ngàn năm văn hiến 🇻🇳";
+    if (name.includes("hải phòng")) return "Thành phố hoa phượng đỏ 🔥";
+    if (name.includes("hồ chí minh") || name.includes("tp hcm")) return "Trung tâm kinh tế lớn nhất VN 💼";
+    if (name.includes("vũng tàu")) return "Bãi biển tuyệt vời cho nghỉ dưỡng 🏝️";
+    return "Địa điểm thú vị, nhưng t chưa biết nhiều về nó 🤖";
+  }
+</script>
+</body>
+  </html>

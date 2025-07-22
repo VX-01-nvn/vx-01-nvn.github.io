@@ -55,7 +55,7 @@
   // Định vị người dùng
   map.locate({ setView: true, maxZoom: 12 });
   map.on('locationfound', e => {
-    L.marker(e.latlng).addTo(map).bindPopup("Bạn đang ở đây 📍").openPopup();
+    L.marker(e.latlng).addTo(map).bindPopup("m ở đây📍").openPopup();
   });
   map.on('locationerror', () => {
     alert("Không lấy được vị trí của bạn!");
@@ -75,7 +75,7 @@
         `<b>${query}</b><br>${fakeAI(query)}`
       ).openPopup();
     } else {
-      alert("Không tìm thấy địa điểm!");
+      alert("éo tồn tại🗿!");
     }
   }
 
@@ -84,7 +84,7 @@
     name = name.toLowerCase();
     if (name.includes("đà nẵng")) return "Thành phố đáng sống nhất VN 🏖️";
     if (name.includes("hà nội")) return "Thủ đô ngàn năm văn hiến 🇻🇳";
-    if (name.includes("hải phòng")) return "Thành phố hoa phượng đỏ 🔥";
+    if (name.includes("hải phòng")) return "Thành phố súng hoa cải 🔥";
     if (name.includes("hồ chí minh") || name.includes("tp hcm")) return "Trung tâm kinh tế lớn nhất VN 💼";
     if (name.includes("vũng tàu")) return "Bãi biển tuyệt vời cho nghỉ dưỡng 🏝️";
     return "Địa điểm thú vị, nhưng t chưa biết nhiều về nó 🤖";
